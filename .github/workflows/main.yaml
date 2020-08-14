@@ -1,0 +1,24 @@
+on:
+  push:
+    branches:
+      - master
+name: ci
+jobs:
+  add-license:
+    runs-on: ubuntu-latest
+    env:
+      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Add-license # the physical changes you want to make to your repository
+        run: (curl http://www.apache.org/licenses/LICENSE-2.0.txt) > LICENSE # For example adding LICENSE file
+      - uses: TomKristie/code-suggester@bug-exit-code-always-0 # takes the changes from git directory
+        with:
+          command: pr
+          upstream_owner: TomKristie
+          upstream_repo: HelloWorld
+          description: "Regenerating license file"
+          title: "chore: regenerate license file"
+          message: "chore: my commit message"
+          branch: license-regenerate
+          git_dir: "."
